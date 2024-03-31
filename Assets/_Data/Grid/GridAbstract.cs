@@ -17,7 +17,7 @@ public abstract class GridAbstract : IT4MonoBehaviour
 	{
 		if (this.Controller != null) return;
 		this.Controller = transform.parent.GetComponent<GridManagerController>();
-		Debug.Log(transform.name + "LoadController", gameObject);
+		Debug.LogWarning(transform.name + "LoadController", gameObject);
 	}
 
 }
