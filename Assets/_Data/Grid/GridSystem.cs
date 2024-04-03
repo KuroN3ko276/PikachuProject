@@ -1,4 +1,5 @@
-﻿using System.Collections;
+﻿using JetBrains.Annotations;
+using System.Collections;
 using System.Collections.Generic;
 using UnityEditor.Experimental.GraphView;
 using UnityEngine;
@@ -30,6 +31,44 @@ public class GridSystem : GridAbstract
 	protected override void Start()
 	{
 		this.SpawnBlocks();
+		this.FindNodesNeighbors();
+		this.FindBlocksNeighbors();
+	}
+
+	protected virtual void FindNodesNeighbors()
+	{
+		int x, y;
+		foreach (Node node in this.nodes)
+		{
+			x = node.x;
+			y = node.y;
+			node.up = this.GetNodeByXY(x, y + 1);
+			node.right= this.GetNodeByXY(x+1, y);
+			node.down = this.GetNodeByXY(x, y - 1);
+			node.left = this.GetNodeByXY(x-1,y);
+		}
+	}
+
+	protected virtual Node GetNodeByXY(int x, int y)
+	{
+		foreach(Node node in this.nodes)
+		{
+			if (node.x == x && node.y == y) return node;
+
+		}
+		return null;
+	}
+	protected virtual void FindBlocksNeighbors()
+	{
+		foreach(Node node in this.nodes)
+		{
+			if(node.blockController == null ) continue;
+			node.blockController.neighbors.Add(node.up.blockController);
+			node.blockController.neighbors.Add(node.right.blockController);
+			node.blockController.neighbors.Add(node.down.blockController);
+			node.blockController.neighbors.Add(node.left.blockController);
+
+		}
 	}
 
 	protected virtual void InitGridSystem()
@@ -86,7 +125,9 @@ public class GridSystem : GridAbstract
 				Transform block = this.Controller.blockSpawner.Spawn(BlockSpawner.BLOCK, pos, Quaternion.identity);
 				BlockController blockController = block.GetComponent<BlockController>();
 				blockController.blockData.SetSprite(sprite);
+				
 				this.LinkNodeBlock(node,blockController);
+				block.name = "Block_"+node.x.ToString()+"_"+node.y.ToString();
 				block.gameObject.SetActive(true);
 			}
 		}

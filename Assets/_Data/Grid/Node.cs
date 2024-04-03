@@ -7,8 +7,8 @@ using System.Threading.Tasks;
 [Serializable]
 public class Node
 {
-	public float x = 0;
-	public float y = 0;
+	public int x = 0;
+	public int y = 0;
 	public float posX=0;
 	public float posY=0;
 	public int weight = 1;

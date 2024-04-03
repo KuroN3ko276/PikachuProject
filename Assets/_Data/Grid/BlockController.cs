@@ -7,6 +7,7 @@ public class BlockController : IT4MonoBehaviour
     [Header("Block Controller")]
     public SpriteRenderer sprite;
     public BlockData blockData;
+    public List<BlockController> neighbors = new List<BlockController>(); //TODO: how to get this??
     protected override void LoadComponents()
     {
         base.LoadComponents();
