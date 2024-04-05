@@ -10,7 +10,7 @@ public class GridSystem : GridAbstract
 	public int width = 18;
 	public int height = 11;
 	private float offsetX = 0.19f;
-	private float offsetY = 0;
+	//private float offsetY = 0;
 	public BlocksProfile blocksProfile;
 	public List<Node> nodes;
 	public List<int> nodeIDs;
