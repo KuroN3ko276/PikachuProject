@@ -19,5 +19,19 @@ public class Node
 	public Node left;
 	public Node right;
 	public BlockController blockController;
+	public NodeTransform nodeTranfrom;
+
+	public virtual List<Node> Neighbors
+	{
+		get
+		{
+			List<Node> nodes = new List<Node>();
+			nodes.Add(up);
+			nodes.Add(right);
+			nodes.Add(down);
+			nodes.Add(left);
+			return nodes;
+		}
+	}
 }
 

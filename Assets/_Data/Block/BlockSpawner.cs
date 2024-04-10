@@ -9,6 +9,8 @@ public class BlockSpawner : Spawner
 	public static BlockSpawner Instance => instance;
 
 	public static string BLOCK = "Block";
+	public static string HOLDER = "BlockHolder";
+	public static string LINKER = "Linker";
 
 	protected override void Awake()
 	{

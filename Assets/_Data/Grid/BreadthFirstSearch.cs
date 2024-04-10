@@ -5,27 +5,29 @@ using UnityEngine;
 public class BreadthFirstSearch : GridAbstract,IPathfinding
 {
     [Header("Breadth First Search")]
-    public Queue<BlockController> queue = new Queue<BlockController>();
-	public List<BlockController> path = new List<BlockController>();
-	public Dictionary<BlockController, BlockController> cameFrom = new Dictionary<BlockController, BlockController>();
+    public Queue<Node> queue = new Queue<Node>();
+	public List<Node> path = new List<Node>();
+	public Dictionary<Node, Node> cameFrom = new Dictionary<Node, Node>();
    
 
     public virtual void FindPath(BlockController startBlock, BlockController targetBlock)
     {
         Debug.Log("PathFinding");
+        Node startNode = startBlock.blockData.node;
+        Node targetNode = targetBlock.blockData.node;
 
-		this.queue.Enqueue(startBlock);
-        this.cameFrom[startBlock]=startBlock;
+		this.queue.Enqueue(startNode);
+        this.cameFrom[startNode]=startNode;
 
         while(this.queue.Count > 0)
         {
-            BlockController current = this.queue.Dequeue();
-			if (current == targetBlock)
+            Node current = this.queue.Dequeue();
+			if (current == targetNode)
             {
-                ConstructPath(startBlock,targetBlock);
+                ConstructPath(startNode,targetNode);
                 break;
             }
-            foreach(BlockController neighbor in current.neighbors)
+            foreach(Node neighbor in current.Neighbors)
             {
                 if(neighbor == null) { continue; }
 				if (IsValidPosition(neighbor) && !cameFrom.ContainsKey(neighbor))
@@ -40,27 +42,31 @@ public class BreadthFirstSearch : GridAbstract,IPathfinding
 
     protected virtual void ShowPath()
     {
-        foreach(BlockController current in this.path)
+        Vector3 pos;
+        foreach(Node node in this.path)
         {
-            current.blockData.text.color=Color.blue;
+            pos = node.nodeTranfrom.transform.position;
+            Transform linker = this.Controller.blockSpawner.Spawn(BlockSpawner.LINKER, pos, Quaternion.identity);
+            linker .gameObject.SetActive(true);
         }
     }
-    protected virtual void ConstructPath(BlockController startBlock, BlockController targetBlock)
+    protected virtual void ConstructPath(Node startNode, Node targetNode)
     {
-        BlockController currentCell = targetBlock;
+        Node currentCell = targetNode;
 
-        while(currentCell != startBlock) 
+        while(currentCell != startNode) 
         {
             path.Add(currentCell);
             currentCell = this.cameFrom[currentCell];
         }
-        path.Add(startBlock);
+        path.Add(startNode);
         path.Reverse();
     }
     
 
-    private bool IsValidPosition(BlockController block)
+    private bool IsValidPosition(Node node)
     {
-        return true; //TODO: 
-    }
+        return !node.occupied;
+	}
+         
 }

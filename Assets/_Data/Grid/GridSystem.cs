@@ -11,7 +11,7 @@ public class GridSystem : GridAbstract
 	public int height = 11;
 	private float offsetX = 0.19f;
 	//private float offsetY = 0;
-	public BlocksProfile blocksProfile;
+	public BlocksProfileSO blocksProfile;
 	public List<Node> nodes;
 	public List<int> nodeIDs;
 	protected override void LoadComponents()
@@ -24,12 +24,13 @@ public class GridSystem : GridAbstract
 	protected virtual void LoadBlockProfile()
 	{
 		if (this.blocksProfile != null) return;
-		this.blocksProfile = Resources.Load<BlocksProfile>("Pikachu");
+		this.blocksProfile = Resources.Load<BlocksProfileSO>("Pikachu");
 		Debug.LogWarning(transform.name + "LoadBlockProfile", gameObject);
 	}
 
 	protected override void Start()
 	{
+		this.SpawnHolders();
 		this.SpawnBlocks();
 		this.FindNodesNeighbors();
 		this.FindBlocksNeighbors();
@@ -93,21 +94,23 @@ public class GridSystem : GridAbstract
 			}
 		}
 	}
-	protected virtual void SpawnNodes()
+	protected virtual void SpawnHolders()
 	{	
 		Vector3 pos = new Vector3(0,0,0);
 		foreach(Node node in this.nodes)
 		{
-			if (node.x == 0) continue;
-			if (node.x == this.width-1) continue;
-			if (node.y == 0) continue;
-			if(node.y==this.height-1) continue;
-
 			pos.x = node.posX;
 			pos.y=node.y;
-			Transform block = this.Controller.blockSpawner.Spawn(BlockSpawner.BLOCK, pos, Quaternion.identity);
-			BlockController blockController = block.GetComponent<BlockController>();
-			block.gameObject.SetActive(true);
+
+			Transform blockObj = this.Controller.blockSpawner.Spawn(BlockSpawner.HOLDER, pos, Quaternion.identity);
+			NodeTransform blockHolder = blockObj.GetComponent<NodeTransform>();
+			node.nodeTranfrom = blockHolder;
+			blockObj.name = "Holder_" + node.x.ToString() + "_" + node.y.ToString();
+			blockHolder.gameObject.SetActive(true);
+
+			blockObj.gameObject.SetActive(true);
+
+			node.occupied = true;
 		}
 	}
 
@@ -122,6 +125,7 @@ public class GridSystem : GridAbstract
 				Node node = this.GetRandomNode();
 				pos.x = node.posX;
 				pos.y = node.y;
+
 				Transform block = this.Controller.blockSpawner.Spawn(BlockSpawner.BLOCK, pos, Quaternion.identity);
 				BlockController blockController = block.GetComponent<BlockController>();
 				blockController.blockData.SetSprite(sprite);
